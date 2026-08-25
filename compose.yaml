@@ -27,7 +27,8 @@ services:
     restart: unless-stopped
     env_file: ../agent-store-be/.env
     environment:
-      SPRING_PROFILES_ACTIVE: dev,docker
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/agent_store?currentSchema=public
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       RUNTIME_TOKEN_SECRET: ${RUNTIME_TOKEN_SECRET}
