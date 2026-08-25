@@ -35,7 +35,19 @@ API와 demo-agent는 같은 네트워크 네임스페이스를 공유하므로, 
 항상 함께 다시 생성합니다.
 
 ```powershell
-docker compose --env-file ../agent-store-be/.env up --build -d api demo-agent
+# Compose 설정만 바꾼 경우
+docker compose --env-file ../agent-store-be/.env up -d
+
+# Spring 코드나 application.yaml을 바꾼 경우
+docker compose --env-file ../agent-store-be/.env build api
+docker compose --env-file ../agent-store-be/.env up -d api demo-agent
+```
+
+로컬 Java 없이 Spring 검증을 실행합니다. 첫 실행은 Gradle distribution과 의존성을 받고, 이후 실행은
+`agent-store-gradle-cache` named volume을 재사용합니다.
+
+```powershell
+docker compose --profile tools --env-file ../agent-store-be/.env run --rm gradle test
 ```
 
 프론트엔드는 별도 터미널에서 실행합니다.
@@ -50,6 +62,7 @@ npm run dev
 
 ```powershell
 docker compose --env-file ../agent-store-be/.env config
+docker compose --profile tools --env-file ../agent-store-be/.env config
 Invoke-RestMethod http://localhost:8080/health
 Invoke-RestMethod http://localhost:8090/health
 ```
