@@ -1,14 +1,21 @@
+# syntax=docker/dockerfile:1.7
+
 FROM eclipse-temurin:25-jdk AS builder
 
 WORKDIR /workspace
 
 COPY gradlew build.gradle settings.gradle detekt.yml ./
 COPY gradle ./gradle
+
+RUN --mount=type=cache,id=agent-store-api-gradle,target=/root/.gradle,sharing=locked \
+    sed -i 's/\r$//' gradlew \
+    && chmod +x gradlew \
+    && ./gradlew dependencies --no-daemon > /dev/null
+
 COPY src ./src
 
-RUN sed -i 's/\r$//' gradlew \
-    && chmod +x gradlew \
-    && ./gradlew bootJar --no-daemon \
+RUN --mount=type=cache,id=agent-store-api-gradle,target=/root/.gradle,sharing=locked \
+    ./gradlew bootJar --no-daemon \
     && cp "$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' -print -quit)" /tmp/app.jar
 
 FROM eclipse-temurin:25-jre

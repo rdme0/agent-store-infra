@@ -66,6 +66,20 @@ services:
       retries: 12
       start_period: 10s
 
+  gradle:
+    image: eclipse-temurin:25-jdk
+    profiles: [tools]
+    working_dir: /workspace
+    entrypoint: [bash, ./gradlew]
+    command: [test]
+    environment:
+      GRADLE_USER_HOME: /gradle-cache
+    volumes:
+      - ../agent-store-be:/workspace
+      - agent-store-gradle-cache:/gradle-cache
+
 volumes:
   agent-store-postgres-data:
     name: agent-store-postgres-data
+  agent-store-gradle-cache:
+    name: agent-store-gradle-cache
