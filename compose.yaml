@@ -47,6 +47,7 @@ services:
       start_period: 30s
 
   demo-agent:
+    image: agent-store-demo-agent
     build:
       context: ../demo-agent
       dockerfile: ../agent-store-infra/docker/demo-agent/Dockerfile
