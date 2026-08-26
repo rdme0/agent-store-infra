@@ -2,7 +2,7 @@ name: agent-store
 
 services:
   postgres:
-    image: pgvector/pgvector:pg17
+    image: postgres:17
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     env_file: ../agent-store-be/.env
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: dev,compose
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/agent_store?currentSchema=public
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -35,7 +35,6 @@ services:
       X402_PRIVATE_KEY: ${X402_PRIVATE_KEY}
     ports:
       - "8080:8080"
-      - "8090:8090"
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,7 +55,8 @@ services:
     environment:
       DEMO_AGENT_HOST: 0.0.0.0
       DEMO_AGENT_PORT: 8090
-    network_mode: service:api
+    ports:
+      - "127.0.0.1:8090:8090"
     depends_on:
       api:
         condition: service_started
