@@ -6,13 +6,19 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY cmd ./cmd
+COPY catalog ./catalog
+COPY config ./config
 COPY internal ./internal
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /demo-agent ./cmd/demo-agent
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /catalog-bootstrap ./cmd/catalog-bootstrap
 
 FROM alpine:3.23
 
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /demo-agent /usr/local/bin/demo-agent
+COPY --from=builder /catalog-bootstrap /usr/local/bin/catalog-bootstrap
+COPY --from=builder /workspace/catalog /app/catalog
+COPY --from=builder /workspace/config /app/config
 
 USER 65532:65532
 

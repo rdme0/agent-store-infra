@@ -52,14 +52,20 @@ services:
       dockerfile: ../agent-store-infra/docker/demo-agent/Dockerfile
     restart: unless-stopped
     env_file: ../demo-agent/.env
-    environment:
-      DEMO_AGENT_HOST: 0.0.0.0
-      DEMO_AGENT_PORT: 8090
+    command:
+      - --config
+      - /app/config/application.yaml
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8090"
+      - --mode
+      - ${DEMO_AGENT_MODE:?DEMO_AGENT_MODE is required}
     ports:
       - "127.0.0.1:8090:8090"
     depends_on:
       api:
-        condition: service_started
+        condition: service_healthy
         restart: true
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8090/health"]
@@ -67,6 +73,21 @@ services:
       timeout: 5s
       retries: 12
       start_period: 10s
+
+  catalog-bootstrap:
+    image: agent-store-demo-agent
+    restart: "no"
+    entrypoint: [catalog-bootstrap]
+    command:
+      - --agent-store-base-url
+      - http://api:8080
+      - --demo-agent-base-url
+      - http://demo-agent:8090
+    depends_on:
+      api:
+        condition: service_healthy
+      demo-agent:
+        condition: service_healthy
 
   gradle:
     image: eclipse-temurin:25-jdk
