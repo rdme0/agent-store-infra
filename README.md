@@ -58,7 +58,7 @@ docker compose --profile tools --env-file ../agent-store-be/.env run --rm gradle
 
 ```powershell
 Set-Location ../agent-store-fe
-npm install
+npm ci
 npm run dev
 ```
 

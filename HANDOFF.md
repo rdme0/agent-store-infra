@@ -4,6 +4,7 @@
 
 ## 소유 범위
 
+- 경로: `C:\work\project\agent-store-infra`
 - `compose.yaml`은 PostgreSQL, Spring API, 독립 Go demo-agent, catalog-bootstrap의 로컬 실행 구성을
   소유한다.
 - Compose는 일반 service network를 사용한다. API는 `api:8080`, Go는 `demo-agent:8090`으로 통신하며
@@ -27,6 +28,8 @@ $env:DEMO_AGENT_MODE = 'fixture'
 docker compose config
 ```
 
-Docker engine이 실행된 상태에서 `docker compose up -d postgres api demo-agent` 후 각 health endpoint를
-확인하고, `docker compose run --rm catalog-bootstrap`으로 catalog 등록을 검증한다. 변경 후
-`git diff --check`를 실행한다.
+Docker engine이 실행된 상태에서 `DEMO_AGENT_MODE=fixture`로 `docker compose up -d postgres api demo-agent` 후
+각 health endpoint를 확인하고, `docker compose run --rm catalog-bootstrap`을 최초·재실행한다. 2026-08-27
+fresh named volume에서 V1~V25 migration, health 200, 13개 Agent·9개 dependency와 두 번의 bootstrap을
+확인했다. 일반 Compose와 tools profile의 `config --quiet`도 통과했다. 기존 volume은 V23의 historical
+simulated payment 보호 동작을 확인하기 위해 삭제하지 않았다. 변경 후 `git diff --check`를 실행한다.
