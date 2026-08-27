@@ -4,7 +4,7 @@
 
 ## 소유 범위
 
-- 경로: `C:\work\project\agent-store-infra`
+- 경로: 이 저장소 루트
 - `compose.yaml`은 PostgreSQL, Spring API, 독립 Go demo-agent, catalog-bootstrap의 로컬 실행 구성을
   소유한다.
 - Compose는 일반 service network를 사용한다. API는 `api:8080`, Go는 `demo-agent:8090`으로 통신하며
